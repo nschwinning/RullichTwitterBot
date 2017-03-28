@@ -1,4 +1,4 @@
-package main;
+package de.rullich.twitter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
-import twitter4j.GeoLocation;
 import twitter4j.Status;
-import twitter4j.Trend;
 import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -47,7 +45,9 @@ public class TwitterBot {
 					e.printStackTrace();
 				}
 			}
-			
+			else {
+				System.out.println(hour + ":" + minute);
+			}
 			try {
 				Thread.sleep(60000);
 			} catch (InterruptedException e) {
@@ -65,7 +65,7 @@ public class TwitterBot {
 		twitter.setOAuthAccessToken(accessToken);
 
 		try {
-			List<Status> statuses = twitter.getHomeTimeline();
+			twitter.getScreenName();
 			connected = true;
 			System.out.println("Successfully connected to twitter account " + twitter.getScreenName());
 		} catch (TwitterException e) {
