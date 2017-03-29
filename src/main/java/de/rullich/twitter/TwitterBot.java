@@ -35,7 +35,7 @@ public class TwitterBot {
                 try {
                     String trend = getRandomTrend();
                     if (connected) {
-                        twitter.updateStatus(NIGHT_TWEET + " " + trend);
+                        twitter.updateStatus(NightTweet.getTweet() + " " + trend);
                     }
                 } catch (TwitterException e) {
                     // TODO Auto-generated catch block
