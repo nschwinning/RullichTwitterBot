@@ -14,19 +14,20 @@ import java.util.Random;
 
 public class TwitterBot {
 
-    static String API_KEY;
-    static String API_SECRET;
-    static String TOKEN;
-    static String TOKEN_SECRET;
-    static Twitter twitter;
-    static boolean connected;
-    static boolean run = true;
-    final static String NIGHT_TWEET = "Noch einer im Bier?";
+    private static String API_KEY;
+    private static String API_SECRET;
+    private static String TOKEN;
+    private static String TOKEN_SECRET;
+    private static Twitter twitter;
+    private static boolean connected;
+    private static boolean run = true;
+    private static JerseyClient jc;
 
     public static void main(String[] args) {
         // TODO Auto-generated method stub
         readConfigFile();
         init();
+        jc = new JerseyClient();
         while (run) {
             LocalDateTime now = LocalDateTime.now();
             int hour = now.getHour();
@@ -42,6 +43,9 @@ public class TwitterBot {
                     e.printStackTrace();
                 }
             } else {
+            	if (fireTweet()){
+            		//Tweet here!
+            	}
                 System.out.println(hour + ":" + minute);
             }
             try {
@@ -106,6 +110,14 @@ public class TwitterBot {
         int n = random.nextInt(trends.getTrends().length);
         String result = trends.getTrends()[n].getName();
         return result;
+    }
+    
+    private static boolean fireTweet(){
+    	int n = (new Random()).nextInt(300);
+    	if (n>297){
+    		return true;
+    	}
+    	return false;
     }
 
 }

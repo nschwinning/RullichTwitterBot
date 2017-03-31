@@ -17,10 +17,10 @@ import com.sun.jersey.api.client.WebResource;
 
 public class JerseyClient {
 
-	public String getTweet() {
-
+	public List<String> getTitles() {
+		List<String> titles = new ArrayList<String>();
+		
 		try {
-			List<String> titles = new ArrayList<String>();
 
 			Client client = Client.create();
 
@@ -55,7 +55,7 @@ public class JerseyClient {
 
 		}
 
-		return "Blabla";
+		return titles;
 
 	}
 
