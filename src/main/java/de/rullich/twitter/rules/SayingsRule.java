@@ -1,38 +1,36 @@
 package de.rullich.twitter.rules;
 
+import com.sun.imageio.plugins.jpeg.JPEG;
+
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Creates tweets based on classic German sayings
  */
 public class SayingsRule extends Rule implements Serializable {
 
-    private final String[] TWEETS = new String[]{
-            "Es ist nicht alles Bier, was glänzt.",
-            "Wer in der Gaststätte Rullich sitzt, sollte nicht mit Steinen werfen.",
-            "Alle Wege führen in die Gaststätte Rullich.",
-            "Auch ein blindes Huhn findet mal einen Korn.",
-            "Besser ein Bier in der Hand als eine Taube auf dem Dach.",
-            "Das Bier im Haus erspart den Zimmermann.",
-            "Dienst ist Dienst und Schnaps ist Schnaps.",
-            "Die Würfel sind gefallen (Schock-Out im Ersten!).",
-            "Erlaubt ist, was Hopfen enthält.",
-            "In der Not säuft der Teufel Fiege.",
-            "Lieber dem Wirt was schenken als den Magen verrenken.",
-            "Wo gehoben wird, fallen Späne.",
-            "Wes' Bier ich trink', des' Lied ich sing.",
-            "Wer's glaubt, wird bierselig.",
-            "Wer fastet, der rostet.",
-            "Wer Stauder sagt, muss auch Jacob sagen.",
-            "Bier auf Wein, das ist fein. Wein auf Bier das rat' ich dir."
-    };
+    private static final Logger logger = Logger.getLogger(SayingsRule.class.getName());
+
+    // file containing the tweets
+    private static final String TEMPLATE_FILE = "sayings.txt";
 
     private final Random RANDOM = new Random();
 
+    private List<String> tweets;
+
     public SayingsRule() {
         super(RuleCategory.SAYINGS);
+
+        try {
+            tweets = readTemplatesFromFile(TEMPLATE_FILE);
+            logger.info(String.format("template file '%s' found. Importing %d entries...", TEMPLATE_FILE, tweets.size()));
+        } catch (IOException e) {
+            logger.warning("unable to read template file " + TEMPLATE_FILE);
+            tweets = new LinkedList<>();
+        }
     }
 
     @Override
@@ -51,8 +49,8 @@ public class SayingsRule extends Rule implements Serializable {
 
     @Override
     RuleApplication apply() {
-        final int index = RANDOM.nextInt(TWEETS.length);
-        final String tweet = TWEETS[index];
+        final int index = RANDOM.nextInt(tweets.size());
+        final String tweet = tweets.get(index);
 
         return new RuleApplication(this, tweet, Integer.toString(index));
     }

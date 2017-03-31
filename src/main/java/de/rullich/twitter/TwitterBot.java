@@ -1,5 +1,7 @@
 package de.rullich.twitter;
 
+import de.rullich.twitter.rules.RuleEngine;
+import de.rullich.twitter.rules.SayingsRule;
 import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -27,6 +29,10 @@ public class TwitterBot {
         // TODO Auto-generated method stub
         readConfigFile();
         init();
+
+        final RuleEngine ruleEngine = new RuleEngine();
+        ruleEngine.registerRule(new SayingsRule());
+
         jc = new JerseyClient();
         while (run) {
             LocalDateTime now = LocalDateTime.now();

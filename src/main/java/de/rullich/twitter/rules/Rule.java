@@ -1,6 +1,11 @@
 package de.rullich.twitter.rules;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Represents a 'twitter rule', i.e.
@@ -43,4 +48,8 @@ public abstract class Rule implements Serializable {
      * @return
      */
     abstract RuleApplication apply();
+
+    static List<String> readTemplatesFromFile(final String fileName) throws IOException {
+        return FileUtils.readLines(new File(fileName), "UTF-8");
+    }
 }
