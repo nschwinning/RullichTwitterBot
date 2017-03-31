@@ -1,5 +1,9 @@
 package de.rullich.twitter.rules;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -19,6 +23,11 @@ public class RuleEngine {
     // number of rule applications that are stored
     private static final int HISTORY_SIZE = 20;
 
+    // file that stores the state of ruleApplications variable
+    private static final String HISTORY_FILE = "rules.history";
+
+    private final Path HISTORY_FILE_PATH = Paths.get(HISTORY_FILE);
+
     // the rules that have been bound to the engine
     private Set<Rule> rules = new HashSet<>();
 
@@ -37,6 +46,11 @@ public class RuleEngine {
             this.fromWeight = fromWeight;
             this.toWeight = toWeight;
         }
+    }
+
+    public RuleEngine() {
+        // try to load ruleApplications
+        loadRuleApplications();
     }
 
     public void registerRule(final Rule rule) {
@@ -99,6 +113,8 @@ public class RuleEngine {
                 ruleApplications.remove(0);
             }
 
+            saveRuleApplications();
+
             return Optional.of(result);
         } else {
             // there seems to be an error here.
@@ -110,5 +126,37 @@ public class RuleEngine {
 
     public List<RuleApplication> getRuleApplications() {
         return Collections.unmodifiableList(ruleApplications);
+    }
+
+    /**
+     * Loads the ruleApplications list from HISTORY_FILE
+     */
+    private void loadRuleApplications() {
+        if (Files.exists(HISTORY_FILE_PATH)) {
+            logger.info(String.format("history file found"));
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(HISTORY_FILE_PATH.toFile()))) {
+                ruleApplications = (List<RuleApplication>) in.readObject();
+
+                // set all the Rule instances' ruleEngine field to this rule engine
+                ruleApplications.stream()
+                        .map(ra -> ra.getRule())
+                        .forEach(rule -> rule.setRuleEngine(this));
+
+                logger.info(String.format("history loaded (%d RuleApplication items)", ruleApplications.size()));
+            } catch (IOException | ClassNotFoundException e) {
+                logger.warning("error while loading history: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Stores the ruleApplications list in HISTORY_FILE
+     */
+    private void saveRuleApplications() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(HISTORY_FILE_PATH.toFile()))) {
+            out.writeObject(ruleApplications);
+        } catch (IOException e) {
+            logger.warning("error while writing history file: " + e.getMessage());
+        }
     }
 }

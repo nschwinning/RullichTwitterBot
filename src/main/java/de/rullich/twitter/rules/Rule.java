@@ -1,14 +1,16 @@
 package de.rullich.twitter.rules;
 
+import java.io.Serializable;
+
 /**
  * Represents a 'twitter rule', i.e.
  */
-public abstract class Rule {
+public abstract class Rule implements Serializable {
 
     final RuleCategory ruleCategory;
 
     // engine that is used to apply this rule
-    RuleEngine ruleEngine;
+    transient RuleEngine ruleEngine;
 
     public Rule(RuleCategory ruleCategory) {
         this.ruleCategory = ruleCategory;

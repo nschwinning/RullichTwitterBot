@@ -1,12 +1,13 @@
 package de.rullich.twitter.rules;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.Random;
 
 /**
  * Creates tweets based on classic German sayings
  */
-public class SayingsRule extends Rule {
+public class SayingsRule extends Rule implements Serializable {
 
     private final String[] TWEETS = new String[]{
             "Es ist nicht alles Bier, was glänzt.",
