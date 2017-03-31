@@ -3,6 +3,9 @@ package de.rullich.twitter.rules;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * Creates tweets based on classic German sayings
+ */
 public class SayingsRule extends Rule {
 
     private final String[] TWEETS = new String[]{
@@ -13,10 +16,16 @@ public class SayingsRule extends Rule {
             "Besser ein Bier in der Hand als eine Taube auf dem Dach.",
             "Das Bier im Haus erspart den Zimmermann.",
             "Dienst ist Dienst und Schnaps ist Schnaps.",
-            "Die Würfel sind gefallen (Schock Out im Ersten!).",
+            "Die Würfel sind gefallen (Schock-Out im Ersten!).",
             "Erlaubt ist, was Hopfen enthält.",
             "In der Not säuft der Teufel Fiege.",
-            "Lieber dem Wirt was schenken als den Magen verrenken."
+            "Lieber dem Wirt was schenken als den Magen verrenken.",
+            "Wo gehoben wird, fallen Späne.",
+            "Wes' Bier ich trink', des' Lied ich sing.",
+            "Wer's glaubt, wird bierselig.",
+            "Wer fastet, der rostet.",
+            "Wer Stauder sagt, muss auch Jacob sagen.",
+            "Bier auf Wein, das ist fein. Wein auf Bier das rat' ich dir."
     };
 
     private final Random RANDOM = new Random();
