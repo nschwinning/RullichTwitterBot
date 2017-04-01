@@ -1,18 +1,14 @@
 package de.rullich.twitter.rules;
 
-import com.sun.imageio.plugins.jpeg.JPEG;
-
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 /**
  * Creates tweets based on classic German sayings
  */
 public class SayingsRule extends Rule implements Serializable {
-
-    private static final Logger logger = Logger.getLogger(SayingsRule.class.getName());
 
     // file containing the tweets
     private static final String TEMPLATE_FILE = "sayings.txt";
@@ -24,13 +20,7 @@ public class SayingsRule extends Rule implements Serializable {
     public SayingsRule() {
         super(RuleCategory.SAYINGS);
 
-        try {
-            tweets = readTemplatesFromFile(TEMPLATE_FILE);
-            logger.info(String.format("template file '%s' found. Importing %d entries...", TEMPLATE_FILE, tweets.size()));
-        } catch (IOException e) {
-            logger.warning("unable to read template file " + TEMPLATE_FILE);
-            tweets = new LinkedList<>();
-        }
+        tweets = getTemplatesFromFile(TEMPLATE_FILE);
     }
 
     @Override
