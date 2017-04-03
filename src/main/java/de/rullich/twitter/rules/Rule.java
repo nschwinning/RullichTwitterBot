@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -46,7 +47,18 @@ public abstract class Rule implements Serializable {
      *
      * @return the rule's weight (can be based on the previously applied rules)
      */
-    abstract int getWeight();
+    int getWeight() {
+        Optional<RuleApplication> optionalApplication = ruleEngine.getRuleApplications().stream()
+                .filter(application ->
+                        application.getRule().getRuleCategory() == this.ruleCategory)
+                .findAny();
+
+        if (optionalApplication.isPresent()) {
+            return 1;
+        } else {
+            return 100;
+        }
+    }
 
     /**
      * Applies the rule. The return value contains the resulting tweet (among other information)

@@ -24,20 +24,6 @@ public class SayingsRule extends Rule implements Serializable {
     }
 
     @Override
-    int getWeight() {
-        Optional<RuleApplication> optionalApplication = ruleEngine.getRuleApplications().stream()
-                .filter(application ->
-                        application.getRule().getRuleCategory() == this.ruleCategory)
-                .findAny();
-
-        if (optionalApplication.isPresent()) {
-            return 1;
-        } else {
-            return 100;
-        }
-    }
-
-    @Override
     RuleApplication apply() {
         final int index = RANDOM.nextInt(tweets.size());
         final String tweet = tweets.get(index);
