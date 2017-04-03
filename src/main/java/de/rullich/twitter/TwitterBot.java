@@ -1,6 +1,7 @@
 package de.rullich.twitter;
 
 import de.rullich.twitter.rules.DerWestenRule;
+import de.rullich.twitter.rules.RuleApplication;
 import de.rullich.twitter.rules.RuleEngine;
 import de.rullich.twitter.rules.SayingsRule;
 import twitter4j.Trends;
@@ -12,10 +13,16 @@ import twitter4j.auth.AccessToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class TwitterBot {
+
+    private static final Logger logger = Logger.getLogger(TwitterBot.class.getName());
+
+    private static final int ONE_MINUTE = 60 * 1000; // 60 seconds times 1.000 milliseconds
 
     private static String API_KEY;
     private static String API_SECRET;
@@ -51,13 +58,27 @@ public class TwitterBot {
                     e.printStackTrace();
                 }
             } else {
-            	if (fireTweet()){
-            		//Tweet here!
-            	}
-                System.out.println(hour + ":" + minute);
+                if (fireTweet()) {
+                    final Optional<RuleApplication> optionalRuleApplication = ruleEngine.fireNextRule();
+
+                    if (optionalRuleApplication.isPresent()) {
+                        // could successfully apply a rule
+                        final String tweet = optionalRuleApplication.get().getTweet();
+
+                        try {
+                            twitter.updateStatus(tweet);
+                            logger.info("updated status: " + tweet);
+                        } catch (TwitterException e) {
+                            logger.warning("unable to update status. reason: " + e.getMessage());
+                        }
+                    } else {
+                        // no rule could be applied
+                        logger.warning("tried to apply a rule but no rule was applicable right now");
+                    }
+                }
             }
             try {
-                Thread.sleep(60000);
+                Thread.sleep(ONE_MINUTE);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -119,13 +140,13 @@ public class TwitterBot {
         String result = trends.getTrends()[n].getName();
         return result;
     }
-    
-    private static boolean fireTweet(){
-    	int n = (new Random()).nextInt(300);
-    	if (n>297){
-    		return true;
-    	}
-    	return false;
+
+    private static boolean fireTweet() {
+        int n = (new Random()).nextInt(300);
+        if (n > 297) {
+            return true;
+        }
+        return false;
     }
 
 }
