@@ -1,0 +1,9 @@
+Mann
+Frau
+Kleinkind
+Fahrradfahrer
+Bagger
+Anwältin
+Papst
+Bier
+Dosenbier

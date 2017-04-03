@@ -1,5 +1,6 @@
 package de.rullich.twitter;
 
+import de.rullich.twitter.rules.DerWestenRule;
 import de.rullich.twitter.rules.RuleEngine;
 import de.rullich.twitter.rules.SayingsRule;
 import twitter4j.Trends;
@@ -32,6 +33,7 @@ public class TwitterBot {
 
         final RuleEngine ruleEngine = new RuleEngine();
         ruleEngine.registerRule(new SayingsRule());
+        ruleEngine.registerRule(new DerWestenRule());
 
         jc = new JerseyClient();
         while (run) {

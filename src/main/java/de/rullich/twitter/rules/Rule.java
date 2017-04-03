@@ -74,19 +74,19 @@ public abstract class Rule implements Serializable {
      * @param fileName file containing tweet templates
      * @return
      */
-    protected List<String> getTemplatesFromFile(final String fileName) {
+    protected List<String> getLinesFromFile(final String fileName) {
         List<String> lines;
 
         try {
             // try to read it from the current directory
-            lines = readTemplatesFromFile(fileName);
+            lines = readLinesFromFile(fileName);
             logger.info(String.format("template file '%s' found. %d entries imported.", fileName, lines.size()));
         } catch (IOException e) {
             logger.warning(String.format("unable to read template file '%s'. Falling back to packaged '%s'...", fileName, fileName));
 
             try {
                 // try to read it from the packed jar
-                lines = readTemplatesFromClasspathFile(fileName);
+                lines = readLinesFromClasspathFile(fileName);
                 logger.info(String.format("packaged template file '%s' found. %d entries imported.", fileName, lines.size()));
             } catch (IOException | URISyntaxException ee) {
                 // everything went wrong. we just return an empty list
@@ -98,11 +98,11 @@ public abstract class Rule implements Serializable {
         return lines;
     }
 
-    private static List<String> readTemplatesFromFile(final String fileName) throws IOException {
+    private static List<String> readLinesFromFile(final String fileName) throws IOException {
         return FileUtils.readLines(new File(fileName), "UTF-8");
     }
 
-    private static List<String> readTemplatesFromClasspathFile(final String fileName) throws IOException, URISyntaxException {
+    private static List<String> readLinesFromClasspathFile(final String fileName) throws IOException, URISyntaxException {
         return IOUtils.readLines(Rule.class.getResource("/" + fileName).openStream(), "UTF-8");
     }
 }

@@ -2,7 +2,6 @@ package de.rullich.twitter.rules;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -20,7 +19,7 @@ public class SayingsRule extends Rule implements Serializable {
     public SayingsRule() {
         super(RuleCategory.SAYINGS);
 
-        tweets = getTemplatesFromFile(TEMPLATE_FILE);
+        tweets = getLinesFromFile(TEMPLATE_FILE);
     }
 
     @Override
