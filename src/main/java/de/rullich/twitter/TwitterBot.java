@@ -4,6 +4,8 @@ import de.rullich.twitter.rules.DerWestenRule;
 import de.rullich.twitter.rules.RuleApplication;
 import de.rullich.twitter.rules.RuleEngine;
 import de.rullich.twitter.rules.SayingsRule;
+import de.rullich.twitter.tweets.NightTweet;
+import de.rullich.twitter.tweets.TimedTweet;
 import twitter4j.Trends;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -12,16 +14,15 @@ import twitter4j.auth.AccessToken;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Time;
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
  * The real bot. Runs in a thread, wakes up from time to time and updates the twitter status (or not).
  */
-public class TwitterBot implements Runnable {
+public class TwitterBot implements Runnable, TrendProvider {
 
     private static final Logger logger = Logger.getLogger(TwitterBot.class.getName());
 
@@ -54,6 +55,9 @@ public class TwitterBot implements Runnable {
     // managing of rules and their application
     private final RuleEngine ruleEngine = new RuleEngine();
 
+    // fixed-time tweets
+    private final List<TimedTweet> timedTweets = new LinkedList<>();
+
     private final Random random = new Random();
 
     @Override
@@ -68,6 +72,8 @@ public class TwitterBot implements Runnable {
             ruleEngine.registerRule(new SayingsRule());
             ruleEngine.registerRule(new DerWestenRule());
 
+            timedTweets.add(new NightTweet(this));
+
             jc = new JerseyClient();
         } catch (IOException e) {
             logger.severe("error while starting TwitterBot: " + e.getMessage());
@@ -75,16 +81,22 @@ public class TwitterBot implements Runnable {
 
         while (running) {
             final LocalDateTime now = LocalDateTime.now();
-            int hour = now.getHour();
-            int minute = now.getMinute();
-            if (minute == 23 && hour == 4) {
-                try {
-                    final String trend = getRandomTrend();
-                    twitter.updateStatus(NightTweet.getTweet() + " " + trend);
-                } catch (TwitterException e) {
-                    logger.warning("unable to update status: " + e.getMessage());
+
+            boolean timedTweetFired = false;
+
+            for(final TimedTweet timedTweet : timedTweets) {
+                if(timedTweet.isApplicable(now)) {
+                    try {
+                        twitter.updateStatus(timedTweet.getTweet());
+                    } catch (TwitterException e) {
+                        logger.warning("unable to update status: " + e.getMessage());
+                    }
+
+                    timedTweetFired = true;
                 }
-            } else {
+            }
+
+            if(!timedTweetFired) {
                 if (fireTweet()) {
                     final Optional<RuleApplication> optionalRuleApplication = ruleEngine.fireNextRule();
 
@@ -136,13 +148,8 @@ public class TwitterBot implements Runnable {
         }
     }
 
-    /**
-     * Reads and returns a random trending keyword for Essen
-     *
-     * @return a random trend
-     * @throws TwitterException when Twitter service or network is unavailable
-     */
-    private String getRandomTrend() throws TwitterException {
+    @Override
+    public String provideTrend() throws TwitterException {
         final Trends trends = twitter.getPlaceTrends(WOEID_ESSEN);
         final int n = random.nextInt(trends.getTrends().length);
         final String result = trends.getTrends()[n].getName();

@@ -58,6 +58,8 @@ public class RuleEngine {
 
         rule.setRuleEngine(this);
         this.rules.add(rule);
+
+        logger.info(String.format("Rule %s registered.", rule.getClass().getSimpleName()));
     }
 
     /**
