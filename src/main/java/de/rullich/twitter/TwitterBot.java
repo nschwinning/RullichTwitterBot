@@ -18,6 +18,7 @@ import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * The real bot. Runs in a thread, wakes up from time to time and updates the twitter status (or not).
@@ -84,8 +85,8 @@ public class TwitterBot implements Runnable, TrendProvider {
 
             boolean timedTweetFired = false;
 
-            for(final TimedTweet timedTweet : timedTweets) {
-                if(timedTweet.isApplicable(now)) {
+            for (final TimedTweet timedTweet : timedTweets) {
+                if (timedTweet.isApplicable(now)) {
                     try {
                         twitter.updateStatus(timedTweet.getTweet());
                     } catch (TwitterException e) {
@@ -96,7 +97,7 @@ public class TwitterBot implements Runnable, TrendProvider {
                 }
             }
 
-            if(!timedTweetFired) {
+            if (!timedTweetFired) {
                 if (fireTweet()) {
                     final Optional<RuleApplication> optionalRuleApplication = ruleEngine.fireNextRule();
 
@@ -151,10 +152,18 @@ public class TwitterBot implements Runnable, TrendProvider {
     @Override
     public String provideTrend() throws TwitterException {
         final Trends trends = twitter.getPlaceTrends(WOEID_ESSEN);
-        final int n = random.nextInt(trends.getTrends().length);
-        final String result = trends.getTrends()[n].getName();
 
-        return result;
+        final List<String> hashtagTrends = Arrays.stream(trends.getTrends())
+                .map(trend -> trend.getName())
+                .filter(name -> name.startsWith("#"))
+                .collect(Collectors.toList());
+
+        if (hashtagTrends.size() == 0) {
+            // if there is no trend starting with a hashtag...
+            return "";
+        } else {
+            return hashtagTrends.get(random.nextInt(hashtagTrends.size()));
+        }
     }
 
     /**
