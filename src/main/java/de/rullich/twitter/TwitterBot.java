@@ -100,20 +100,22 @@ public class TwitterBot implements Runnable, TrendProvider {
             if (!timedTweetFired) {
                 if (fireTweet()) {
                     final Optional<RuleApplication> optionalRuleApplication = ruleEngine.fireNextRule();
-
-                    if (optionalRuleApplication.isPresent()) {
-                        // could successfully apply a rule
-                        final String tweet = optionalRuleApplication.get().getTweet();
-
-                        try {
-                            twitter.updateStatus(tweet);
-                            logger.info("updated status: " + tweet);
-                        } catch (TwitterException e) {
-                            logger.warning("unable to update status. reason: " + e.getMessage());
-                        }
-                    } else {
-                        // no rule could be applied
-                        logger.warning("tried to apply a rule but no rule was applicable right now");
+                    
+                    if (optionalRuleApplication!=null){
+	                    if (optionalRuleApplication.isPresent()) {
+	                        // could successfully apply a rule
+	                        final String tweet = optionalRuleApplication.get().getTweet();
+	
+	                        try {
+	                            twitter.updateStatus(tweet);
+	                            logger.info("updated status: " + tweet);
+	                        } catch (TwitterException e) {
+	                            logger.warning("unable to update status. reason: " + e.getMessage());
+	                        }
+	                    } else {
+	                        // no rule could be applied
+	                        logger.warning("tried to apply a rule but no rule was applicable right now");
+	                    }
                     }
                 }
             }
@@ -172,7 +174,7 @@ public class TwitterBot implements Runnable, TrendProvider {
      * @return <code>if a status update should be done</code>, <code>false</code> otherwise
      */
     private boolean fireTweet() {
-        return random.nextInt(300) > 297;
+        return random.nextInt(300) > 295;
     }
 
     /**
