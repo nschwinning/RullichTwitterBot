@@ -51,8 +51,6 @@ public class TwitterBot implements Runnable, TrendProvider {
     // used in run() loop to determine whether to continue or not
     private boolean running;
 
-    private JerseyClient jc;
-
     // managing of rules and their application
     private final RuleEngine ruleEngine = new RuleEngine();
 
@@ -74,8 +72,6 @@ public class TwitterBot implements Runnable, TrendProvider {
             ruleEngine.registerRule(new DerWestenRule());
 
             timedTweets.add(new NightTweet(this));
-
-            jc = new JerseyClient();
         } catch (IOException e) {
             logger.severe("error while starting TwitterBot: " + e.getMessage());
         }
@@ -100,22 +96,20 @@ public class TwitterBot implements Runnable, TrendProvider {
             if (!timedTweetFired) {
                 if (fireTweet()) {
                     final Optional<RuleApplication> optionalRuleApplication = ruleEngine.fireNextRule();
-                    
-                    if (optionalRuleApplication!=null){
-	                    if (optionalRuleApplication.isPresent()) {
-	                        // could successfully apply a rule
-	                        final String tweet = optionalRuleApplication.get().getTweet();
-	
-	                        try {
-	                            twitter.updateStatus(tweet);
-	                            logger.info("updated status: " + tweet);
-	                        } catch (TwitterException e) {
-	                            logger.warning("unable to update status. reason: " + e.getMessage());
-	                        }
-	                    } else {
-	                        // no rule could be applied
-	                        logger.warning("tried to apply a rule but no rule was applicable right now");
-	                    }
+
+                    if (optionalRuleApplication.isPresent()) {
+                        // could successfully apply a rule
+                        final String tweet = optionalRuleApplication.get().getTweet();
+
+                        try {
+                            twitter.updateStatus(tweet);
+                            logger.info("updated status: " + tweet);
+                        } catch (TwitterException e) {
+                            logger.warning("unable to update status. reason: " + e.getMessage());
+                        }
+                    } else {
+                        // no rule could be applied
+                        logger.warning("tried to apply a rule but no rule was applicable right now");
                     }
                 }
             }
