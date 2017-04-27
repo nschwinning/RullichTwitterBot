@@ -108,16 +108,23 @@ public class RuleEngine {
         // if there is such a rule, apply it
         if (optionalWeigthedRule.isPresent()) {
             final Rule rule = optionalWeigthedRule.get().rule;
-            final RuleApplication result = rule.apply();
-            ruleApplications.add(result);
+            final Optional<RuleApplication> optionalResult = rule.apply();
 
-            if (ruleApplications.size() > HISTORY_SIZE) {
-                ruleApplications.remove(0);
+            if(optionalResult.isPresent()) {
+                final RuleApplication result = optionalResult.get();
+
+                ruleApplications.add(result);
+
+                if (ruleApplications.size() > HISTORY_SIZE) {
+                    ruleApplications.remove(0);
+                }
+
+                saveRuleApplications();
+
+                return Optional.of(result);
+            } else {
+                return Optional.empty();
             }
-
-            saveRuleApplications();
-
-            return Optional.of(result);
         } else {
             // there seems to be an error here.
             logger.warning("could not determine rule to apply");

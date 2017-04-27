@@ -2,6 +2,7 @@ package de.rullich.twitter.rules;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -23,10 +24,10 @@ public class SayingsRule extends Rule implements Serializable {
     }
 
     @Override
-    RuleApplication apply() {
+    Optional<RuleApplication> apply() {
         final int index = RANDOM.nextInt(tweets.size());
         final String tweet = tweets.get(index);
 
-        return new RuleApplication(this, tweet, Integer.toString(index));
+        return Optional.of(new RuleApplication(this, tweet, Integer.toString(index)));
     }
 }

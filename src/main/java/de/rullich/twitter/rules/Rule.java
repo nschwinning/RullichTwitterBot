@@ -65,7 +65,7 @@ public abstract class Rule implements Serializable {
      *
      * @return
      */
-    abstract RuleApplication apply();
+    abstract Optional<RuleApplication> apply();
 
     /**
      * Reads tweet templates from a file <code>fileName</code> in the current directory. If <code>fileName</code> is not
