@@ -24,7 +24,7 @@ public class JerseyClient {
 
 			Client client = Client.create();
 
-			WebResource webResource = client.resource("http://derwesten.de/staedte/essen/rss");
+			WebResource webResource = client.resource("https://www.derwesten.de/staedte/essen/rss");
 
 			ClientResponse response = webResource.accept("application/xml").get(ClientResponse.class);
 
