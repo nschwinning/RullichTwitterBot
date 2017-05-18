@@ -5,8 +5,18 @@ package de.rullich.twitter;
  */
 public class Main {
 
+    private static final String DEBUG_FLAG = "-debug";
+
     public static void main(String[] args) {
-        final Thread thread = new Thread(new TwitterBot());
+        final TwitterBot twitterBot;
+
+        if(args.length > 0 && args[0].equals("-debug")) {
+            twitterBot = TwitterBot.newDebugInstance();
+        } else {
+            twitterBot = TwitterBot.newInstance();
+        }
+
+        final Thread thread = new Thread(twitterBot);
         thread.start();
     }
 }

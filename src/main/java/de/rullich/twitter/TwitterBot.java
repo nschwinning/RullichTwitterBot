@@ -59,7 +59,27 @@ public class TwitterBot implements Runnable, TrendProvider {
     // fixed-time tweets
     private final List<TimedTweet> timedTweets = new LinkedList<>();
 
+    private final boolean debugMode;
+
     private final Random random = new Random();
+
+    // ----------- Constructor -----------
+
+    private TwitterBot(final boolean debugMode) {
+        this.debugMode = debugMode;
+    }
+
+    // ----------- Factory Methods -----------
+
+    public static TwitterBot newInstance() {
+        return new TwitterBot(false);
+    }
+
+    public static TwitterBot newDebugInstance() {
+        return new TwitterBot(true);
+    }
+
+    // ----------- Other Methods -----------
 
     @Override
     public void run() {
@@ -70,7 +90,9 @@ public class TwitterBot implements Runnable, TrendProvider {
                 running = true;
             }
 
-            logger.info(String.format("starting TwitterBot with a tweet probability of %.4f per minute", PROB_TWEET));
+            final String mode = debugMode ? " in DEBUG mode" : "";
+
+            logger.info(String.format("starting TwitterBot%s with a tweet probability of %.4f per minute", mode, PROB_TWEET));
 
             ruleEngine.registerRule(new SayingsRule());
             ruleEngine.registerRule(new DerWestenRule());
@@ -106,8 +128,12 @@ public class TwitterBot implements Runnable, TrendProvider {
                         final String tweet = optionalRuleApplication.get().getTweet();
 
                         try {
-                            twitter.updateStatus(tweet);
-                            logger.info("updated status: " + tweet);
+                            if (debugMode) {
+                                logger.info("if I wasn't in DEBUG mode, I would have updated my status as follows: " + tweet);
+                            } else {
+                                twitter.updateStatus(tweet);
+                                logger.info("updated status: " + tweet);
+                            }
                         } catch (TwitterException e) {
                             logger.warning("unable to update status. reason: " + e.getMessage());
                         }

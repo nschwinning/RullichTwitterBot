@@ -84,7 +84,7 @@ public class TwitterBotTest {
     }
 
     private TwitterBot setupTwitterBot(final Trend[] transmittedTrends) throws Exception {
-        final TwitterBot bot = new TwitterBot();
+        final TwitterBot bot = TwitterBot.newInstance();
 
         Twitter twitter = mock(Twitter.class);
         Trends trends = mock(Trends.class);
