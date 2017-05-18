@@ -18,7 +18,8 @@ public class NightTweet implements TimedTweet {
             "Abschlussstauder jetzt!",
             "Wer könnte jetzt Nein zu einem leckeren Stauder sagen?",
             "4:23, Zeit für ein Stauder!",
-            "Könnt ihr auch nicht schlafen? Dann lasst uns noch ein Bierchen trinken :)"
+            "Könnt ihr auch nicht schlafen? Dann lasst uns noch ein Bierchen trinken :)",
+            "4:23 Uhr und alle reden nur noch Stauderwelsch!"
     };
 
     private static final int HOUR = 4;
