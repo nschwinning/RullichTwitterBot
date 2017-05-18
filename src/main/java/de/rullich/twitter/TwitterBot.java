@@ -27,6 +27,8 @@ public class TwitterBot implements Runnable, TrendProvider {
 
     private static final Logger logger = Logger.getLogger(TwitterBot.class.getName());
 
+    private static final double PROB_TWEET = 0.017;
+
     // the amount of time the bot will sleep
     private static final int ONE_MINUTE = 60 * 1000; // 60 seconds times 1.000 milliseconds
 
@@ -67,6 +69,8 @@ public class TwitterBot implements Runnable, TrendProvider {
             if (initConnection()) {
                 running = true;
             }
+
+            logger.info(String.format("starting TwitterBot with a tweet probability of %.4f per minute", PROB_TWEET));
 
             ruleEngine.registerRule(new SayingsRule());
             ruleEngine.registerRule(new DerWestenRule());
@@ -168,7 +172,7 @@ public class TwitterBot implements Runnable, TrendProvider {
      * @return <code>if a status update should be done</code>, <code>false</code> otherwise
      */
     private boolean fireTweet() {
-        return random.nextInt(300) > 295;
+        return random.nextDouble() <= PROB_TWEET;
     }
 
     /**
