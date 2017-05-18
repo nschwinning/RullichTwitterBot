@@ -168,7 +168,7 @@ public class TwitterBot implements Runnable, TrendProvider {
      * @return <code>if a status update should be done</code>, <code>false</code> otherwise
      */
     private boolean fireTweet() {
-        return random.nextInt(300) > 295;
+        return random.nextInt(300) > 298;
     }
 
     /**
